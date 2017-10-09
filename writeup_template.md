@@ -23,15 +23,15 @@ The goals / steps of this project are the following:
 [image2]: ./extra_data/children_crossing.png
 [image3]: ./extra_data/limit_80.png
 [image4]: ./extra_data/priority_road.png
-[image5]: ./extra_data/keep_right.png
+
+
 [image6]: ./extra_data/yield.png 
 [image7]: ./extra_data/no_entry.png
-[image8]: ./extra_data/limit_30.png 
 
-[image9]: ./examples/real_images1.png
-[image10]: ./examples/real_images2.png
-[image11]: ./examples/right_ahead.jpeg
-[image12]: ./examples/real_images3.png
+
+
+[image10]: ./examples/real_images4.png
+[image11]: ./examples/real_images5.png
 
 ## Rubric Points
 ###Here I will consider the [rubric points](https://review.udacity.com/#!/rubrics/481/view) individually and describe how I addressed each point in my implementation.  
@@ -60,13 +60,15 @@ signs data set:
 Visualization of the data set, I just show one picture of each class. And using a bar chart to show the distribution of the train set (see below).
 
 
-![alt text][image1]
+![image1]
 
 ###Design and Test a Model Architecture
 
 ####1. Describe how you preprocessed the image data. What techniques were chosen and why did you choose these techniques? Consider including images showing the output of each preprocessing technique. Pre-processing refers to techniques such as converting to grayscale, normalization, etc. 
 
 I tried to convert the images to grayscale, but I find it reduced the recognition rate. Perhaps the color contains information to help separate different trafic signs. I use pixel / 255 - 0.5 to normalize the images, and it significally increased the recognition rate. 
+
+__The reson of normalization is the uniformd data make the model more easily lean the patterns of the data. After this simple normalization, the value of pixels distributed between -0.5 to 0.5 rather than the original very scattered value.This can help the model converge faster.__
 
 
 ####2. Describe what your final model architecture looks like including model type, layers, layer sizes, connectivity, etc.) Consider including a diagram and/or table describing the final model.
@@ -102,8 +104,8 @@ learning rate = 0.001
 
 My final model results were:
 * training set accuracy of 1.00.
-* validation set accuracy of 0.948.
-* test set accuracy of 0.936.
+* validation set accuracy of 0.949.
+* test set accuracy of 0.934.
 
 
 If a well known architecture was chosen:
@@ -118,9 +120,9 @@ LeNet is used in this project. Because it is designed to recognize hand-written 
 
 
 
-![alt text][image2] ![alt text][image3] ![alt text][image4] 
-![alt text][image5] ![alt text][image6] ![alt text][image7]
-![alt text][image8]
+![image2] ![image3] ![image4] 
+![image6] ![image7]
+
 
 The first image might be difficult to classify because ...
 
@@ -131,19 +133,24 @@ Here are the results of the prediction:
 
 | Image			        |     Prediction	        |  		Result		    | 
 |:---------------------:|:-------------------------:|:---------------------:| 
-| Children Crossing		| Children Crossing		    |						| 
-| 80 km/h    			| Priority Road				|			    		|
-| Priority Road			| Priority Road				|					    |
-| Yield     			| Yield               		|					    |
-| No Entry              | Turn Right Ahead          |      Wrong            |
+| Children Crossing		| Be Aware of Ice/Snow	    |		Wrong			| 
+| 80 km/h    			| Priority Road				|		Correct   		|
+| Priority Road			| Priority Road				|		Correct		    |
+| Yield     			| Yield               		|		Correct		    |
+| No Entry              | No Entry                  |       Correct         |
 
 
-The model can only recognize 4 of the 5 trafic signs correctly. So the accuracy is 80%, lower than the accuracy on the test set of 93.6%. 
+The model can only recognize 4 of the 5 trafic signs correctly. So the accuracy is 80%, lower than the accuracy on the test set of 93.4%. 
 
-The following shows the wrongly classified No Entry sign, the normalized image and the softmax probability. It is recognized as Turn Right Ahead sign with strong confidence. The probability is almost 1.0. The last two images are Turn Right Ahead sign and the image after normalization, can't say these two traffic sings have much similarity, but after the simple normalization, they have similar background color. I think I will need to improve the preprocessing if I want to get a better recognition rate.
+The following shows the wrongly classified Children Corssing sign and the normalized image. It is recognized as Be sign with str Aware of Ice/Snow ong confidence. The probability is almost 1.0. 
+The last image is an Be aware of ice/snow sign from the training set. 
+
+__This iamge could be difficault for the model because it has wide edges, after resizing to 32x32 pixels, the valid area become blurry. From the second image, it cann't be recognized by human eyes.__
+The solution may be, when preprocessing the images, we cut out the invalid edges, only keep the area we are interested in.
 
 
-![image7]![image9]![image10]![image11]![image12]
+
+![image2]![image10]![image11]
 ####3. Describe how certain the model is when predicting on each of the five new images by looking at the softmax probabilities for each prediction. Provide the top 5 softmax probabilities for each image along with the sign type of each probability. (OPTIONAL: as described in the "Stand Out Suggestions" part of the rubric, visualizations can also be provided such as bar charts)
 
 
@@ -152,11 +159,11 @@ Only for the Speed Limit (80 km/h), the top five soft max probabilities are:
 
 | Probability         	|     Prediction	        					| 
 |:---------------------:|:---------------------------------------------:| 
-| .91         			| Speed Limit 80 km/h   						| 
-| .05     				| No passing for vehicles 3.5 metric tons		|
-| .03					| Priority Road									|
-| .01	      			| Speed Limit 100 km/h			 				|
-| .00				    | Speed Limit 50 km/h   						|
+| .82         			| Speed Limit 80 km/h   						| 
+| .18     				| Speed Limit 50 km/h                       	|
+| .00	      			| Priority Road     			 				|
+| .00					| End of Speed Limit 80 km/h					|
+| .00				    | Keep Right             						|
 
 
 
